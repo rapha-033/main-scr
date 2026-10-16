@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10131a">
+    <title>Veloura Browser</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            font-family: Arial, sans-serif;
+            background: #10131a;
+            color: #eef1f7;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { margin: 0; min-height: 100vh; }
+
+        .browser {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #171b24;
+        }
+
+        .topbar {
+            padding: 14px 20px 10px;
+            border-bottom: 1px solid #303541;
+            background: #20242e;
+        }
+
+        .tabs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            max-width: 240px;
+            padding: 9px 15px;
+            border-radius: 10px 10px 4px 4px;
+            background: #303541;
+            color: #f4f5f8;
+            font-size: 0.88rem;
+        }
+
+        .tab-mark {
+            display: grid;
+            width: 20px;
+            height: 20px;
+            place-items: center;
+            border-radius: 6px;
+            background: #d96f4b;
+            color: white;
+            font-size: 0.72rem;
+            font-weight: bold;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .icon-button {
+            display: grid;
+            width: 38px;
+            height: 38px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: #e4e7ed;
+            cursor: pointer;
+            font-size: 1.18rem;
+        }
+
+        .icon-button:hover:not(:disabled) { background: #353b48; }
+        .icon-button:disabled { color: #686e7a; cursor: not-allowed; }
+
+        .address-form {
+            display: flex;
+            flex: 1;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            height: 42px;
+            padding: 0 13px;
+            border: 1px solid #414754;
+            border-radius: 999px;
+            background: #12151c;
+        }
+
+        .address-form:focus-within {
+            border-color: #d96f4b;
+            box-shadow: 0 0 0 3px rgba(217, 111, 75, 0.15);
+        }
+
+        .lock { color: #9ba2b0; font-size: 0.9rem; }
+
+        .address-form input {
+            width: 100%;
+            min-width: 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #f4f5f8;
+            font: inherit;
+            font-size: 0.92rem;
+        }
+
+        .address-form input::placeholder { color: #8c93a1; }
+
+        .go-button, .open-button {
+            border: 0;
+            border-radius: 9px;
+            background: #d96f4b;
+            color: white;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .go-button { padding: 9px 14px; }
+        .go-button:hover, .open-button:hover { background: #c55e3d; }
+
+        .page-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            min-height: 42px;
+            padding: 7px 20px;
+            border-bottom: 1px solid #303541;
+            background: #20242e;
+        }
+
+        .page-tools a {
+            color: #c5cad4;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .page-tools a:hover { color: white; }
+        .page-status { color: #aeb4c0; font-size: 0.8rem; }
+        .open-button { padding: 8px 12px; }
+        .open-button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        main {
+            position: relative;
+            display: flex;
+            flex: 1;
+            min-height: 420px;
+            overflow: hidden;
+            background: #12151c;
+        }
+
+        .start-page {
+            width: min(760px, 100%);
+            margin: auto;
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .start-logo {
+            display: grid;
+            width: 68px;
+            height: 68px;
+            margin: 0 auto 22px;
+            place-items: center;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #d96f4b, #a94d37);
+            box-shadow: 0 12px 40px rgba(217, 111, 75, 0.25);
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .start-page h1 { margin: 0 0 10px; font-size: clamp(2rem, 5vw, 3rem); }
+        .start-page > p { margin: 0; color: #aeb4c0; line-height: 1.6; }
+
+        .shortcuts {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 36px;
+        }
+
+        .shortcut {
+            display: grid;
+            min-height: 100px;
+            align-content: center;
+            justify-items: center;
+            gap: 10px;
+            border: 1px solid #303541;
+            border-radius: 15px;
+            background: #1b1f28;
+            color: #eef1f7;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.88rem;
+            text-decoration: none;
+            transition: background 120ms ease, transform 120ms ease;
+        }
+
+        .shortcut:hover { transform: translateY(-2px); background: #252a35; }
+
+        .shortcut-icon {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            border-radius: 11px;
+            background: #303541;
+            color: #f4a184;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .embed-note {
+            margin-top: 26px !important;
+            font-size: 0.82rem;
+        }
+
+        .web-view {
+            width: 100%;
+            min-height: 420px;
+            flex: 1;
+            border: 0;
+            background: white;
+        }
+
+        [hidden] { display: none !important; }
+
+        @media (max-width: 640px) {
+            .topbar { padding: 10px 12px; }
+            .toolbar { gap: 4px; }
+            .icon-button { width: 34px; height: 36px; }
+            .address-form { gap: 6px; padding: 0 10px; }
+            .go-button { padding: 8px 10px; }
+            .page-tools { padding-right: 12px; padding-left: 12px; }
+            .shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            main { min-height: 360px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="browser">
+        <header class="topbar">
+            <div class="tabs">
+                <div class="tab" aria-current="page">
+                    <span class="tab-mark" aria-hidden="true">V</span>
+                    <span>New tab</span>
+                </div>
+            </div>
+            <div class="toolbar">
+                <button class="icon-button" id="backButton" type="button" aria-label="Go back" title="Go back" disabled>←</button>
+                <button class="icon-button" id="forwardButton" type="button" aria-label="Go forward" title="Go forward" disabled>→</button>
+                <button class="icon-button" id="reloadButton" type="button" aria-label="Reload page" title="Reload page" disabled>↻</button>
+                <button class="icon-button" id="homeButton" type="button" aria-label="Home" title="Home">⌂</button>
+                <form class="address-form" id="addressForm" role="search">
+                    <span class="lock" aria-hidden="true">⌕</span>
+                    <input id="addressInput" type="text" placeholder="Search the web or enter an address" aria-label="Search the web or enter an address" autocomplete="url" spellcheck="false">
+                    <button class="go-button" type="submit">Go</button>
+                </form>
+            </div>
+        </header>
+
+        <div class="page-tools">
+            <a href="index.html">← Veloura Studio</a>
+            <span class="page-status" id="pageStatus" role="status" aria-live="polite">Ready to browse</span>
+            <button class="open-button" id="openButton" type="button" disabled>Open in new tab ↗</button>
+        </div>
+
+        <main>
+            <section class="start-page" id="startPage">
+                <div class="start-logo" aria-hidden="true">V</div>
+                <h1>A little more curious.</h1>
+                <p>Search for something or enter a web address to get started.</p>
+                <div class="shortcuts" aria-label="Quick links">
+                    <button class="shortcut" type="button" data-url="https://www.wikipedia.org">
+                        <span class="shortcut-icon" aria-hidden="true">W</span>
+                        Wikipedia
+                    </button>
+                    <button class="shortcut" type="button" data-url="https://developer.mozilla.org">
+                        <span class="shortcut-icon" aria-hidden="true">M</span>
+                        MDN Web Docs
+                    </button>
+                    <button class="shortcut" type="button" data-url="https://github.com">
+                        <span class="shortcut-icon" aria-hidden="true">G</span>
+                        GitHub
+                    </button>
+                    <button class="shortcut" type="button" data-url="https://www.nationalgeographic.com">
+                        <span class="shortcut-icon" aria-hidden="true">N</span>
+                        National Geographic
+                    </button>
+                </div>
+                <p class="embed-note">Some websites don’t allow themselves to be shown here. If a page doesn’t load, choose “Open in new tab”.</p>
+            </section>
+            <iframe class="web-view" id="webView" title="Web page" hidden></iframe>
+        </main>
+    </div>
+
+    <script>
+        const addressForm = document.getElementById("addressForm");
+        const addressInput = document.getElementById("addressInput");
+        const backButton = document.getElementById("backButton");
+        const forwardButton = document.getElementById("forwardButton");
+        const reloadButton = document.getElementById("reloadButton");
+        const homeButton = document.getElementById("homeButton");
+        const openButton = document.getElementById("openButton");
+        const pageStatus = document.getElementById("pageStatus");
+        const startPage = document.getElementById("startPage");
+        const webView = document.getElementById("webView");
+        const historyEntries = [];
+        let historyIndex = -1;
+        let currentUrl = "";
+
+        function updateControls() {
+            backButton.disabled = historyIndex <= 0;
+            forwardButton.disabled = historyIndex < 0 || historyIndex >= historyEntries.length - 1;
+            reloadButton.disabled = !currentUrl;
+            openButton.disabled = !currentUrl;
+        }
+
+        function displayPage(url) {
+            currentUrl = url;
+            addressInput.value = url;
+            startPage.hidden = true;
+            webView.hidden = false;
+            pageStatus.textContent = "Loading " + new URL(url).hostname;
+            webView.src = url;
+            updateControls();
+        }
+
+        function navigateTo(input) {
+            const value = input.trim();
+            if (!value) {
+                addressInput.focus();
+                return;
+            }
+
+            let destination;
+            try {
+                if (/^[a-z][a-z\d+.-]*:/i.test(value)) {
+                    destination = new URL(value);
+                } else if (/^(localhost|[\w-]+(\.[\w-]+)+)(:\d+)?(\/.*)?$/i.test(value)) {
+                    destination = new URL("https://" + value);
+                } else {
+                    destination = new URL("https://www.google.com/search?q=" + encodeURIComponent(value));
+                }
+            } catch {
+                pageStatus.textContent = "That address doesn’t look valid.";
+                addressInput.focus();
+                return;
+            }
+
+            if (destination.protocol !== "http:" && destination.protocol !== "https:") {
+                pageStatus.textContent = "Only web addresses using HTTP or HTTPS can be opened.";
+                addressInput.focus();
+                return;
+            }
+
+            const url = destination.href;
+            historyEntries.splice(historyIndex + 1);
+            historyEntries.push(url);
+            historyIndex = historyEntries.length - 1;
+            displayPage(url);
+        }
+
+        function showHistoryEntry(index) {
+            historyIndex = index;
+            displayPage(historyEntries[historyIndex]);
+        }
+
+        addressForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            navigateTo(addressInput.value);
+        });
+
+        backButton.addEventListener("click", function () {
+            if (historyIndex > 0) showHistoryEntry(historyIndex - 1);
+        });
+
+        forwardButton.addEventListener("click", function () {
+            if (historyIndex < historyEntries.length - 1) showHistoryEntry(historyIndex + 1);
+        });
+
+        reloadButton.addEventListener("click", function () {
+            if (currentUrl) webView.src = currentUrl;
+        });
+
+        homeButton.addEventListener("click", function () {
+            currentUrl = "";
+            addressInput.value = "";
+            webView.removeAttribute("src");
+            webView.hidden = true;
+            startPage.hidden = false;
+            pageStatus.textContent = "Ready to browse";
+            updateControls();
+        });
+
+        openButton.addEventListener("click", function () {
+            if (currentUrl) window.open(currentUrl, "_blank", "noopener,noreferrer");
+        });
+
+        webView.addEventListener("load", function () {
+            if (currentUrl) pageStatus.textContent = new URL(currentUrl).hostname;
+        });
+
+        document.querySelectorAll(".shortcut").forEach(function (shortcut) {
+            shortcut.addEventListener("click", function () {
+                navigateTo(shortcut.dataset.url);
+            });
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "l") {
+                event.preventDefault();
+                addressInput.focus();
+                addressInput.select();
+            }
+        });
+
+        updateControls();
+    </script>
+</body>
+</html>

@@ -3,43 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website 2 - Retail Store POS</title>
+    <title>Veloura Studio | Retail Store</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e8f5e9; margin: 0; padding: 20px; color: #333; }
-        header { background-color: #2e7d32; color: white; padding: 20px; text-align: center; border-radius: 8px; margin-bottom: 20px; position: relative; }
-        .back-btn { position: absolute; right: 20px; top: 20px; background: #d32f2f; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-size: 14px; }
-        .back-btn:hover { background: #b71c1c; }
-        .main-layout { display: flex; gap: 20px; max-width: 1200px; margin: auto; }
+        :root {
+            --navy: #14263d;
+            --navy-soft: #1f3b5b;
+            --terracotta: #d96f4b;
+            --sand: #f5efe8;
+            --text: #2a2f36;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #f7f3ee 0%, #eef3f8 100%); margin: 0; padding: 24px; color: var(--text); }
+        header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%); color: white; padding: 22px 24px; border-radius: 16px; margin: 0 auto 28px; max-width: 1200px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .brand { display: flex; align-items: center; gap: 16px; }
+        .brand-mark { width: 50px; height: 50px; flex: 0 0 50px; border-radius: 14px; background: var(--terracotta); display: grid; place-items: center; font-size: 1.8rem; font-weight: bold; }
+        header h1 { margin: 0; font-size: clamp(1.5rem, 3vw, 2rem); }
+        .tagline { margin: 5px 0 0; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.68rem; opacity: 0.8; }
+        .back-btn { background: var(--terracotta); color: white; padding: 10px 16px; text-decoration: none; border-radius: 999px; font-size: 14px; font-weight: 700; white-space: nowrap; }
+        .back-btn:hover { background: #c55e3d; }
+        .main-layout { display: flex; gap: 24px; max-width: 1200px; margin: auto; align-items: flex-start; }
         .products-section { flex: 2; }
-        .cart-section { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); height: fit-content; position: sticky; top: 20px; }
+        .cart-section { flex: 1; background: white; padding: 22px; border-radius: 18px; box-shadow: 0 12px 30px rgba(20,38,61,0.08); height: fit-content; position: sticky; top: 20px; }
         
-        h2 { color: #1b5e20; border-bottom: 2px solid #a5d6a7; padding-bottom: 10px; }
+        h2 { color: var(--navy); border-bottom: 2px solid #e5d7cb; padding-bottom: 12px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .product-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .product-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 24px rgba(20,38,61,0.07); transition: transform 0.2s, box-shadow 0.2s; }
+        .product-card:hover { box-shadow: 0 14px 30px rgba(20,38,61,0.12); }
         .product-card:hover { transform: translateY(-5px); }
         .product-info { padding: 15px; text-align: center; }
         .product-info h3 { margin: 0 0 10px 0; font-size: 18px; }
-        .price { color: #2e7d32; font-weight: bold; font-size: 20px; margin-bottom: 15px; display: block; }
+        .price { color: var(--terracotta); font-weight: bold; font-size: 20px; margin-bottom: 15px; display: block; }
         
-        .add-btn { background-color: #2e7d32; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; border-radius: 4px; font-size: 16px; }
-        .add-btn:hover { background-color: #1b5e20; }
+        .add-btn { background-color: var(--navy); color: white; border: none; padding: 11px; width: 100%; cursor: pointer; border-radius: 8px; font-size: 16px; font-weight: 700; }
+        .add-btn:hover { background-color: var(--navy-soft); }
         
         .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .cart-total { font-size: 24px; font-weight: bold; text-align: right; margin-top: 20px; color: #2e7d32; }
-        .checkout-btn { background-color: #1565c0; color: white; border: none; padding: 15px; width: 100%; cursor: pointer; border-radius: 5px; font-size: 18px; margin-top: 20px; }
-        .checkout-btn:hover { background-color: #0d47a1; }
+        .cart-total { font-size: 24px; font-weight: bold; text-align: right; margin-top: 20px; color: var(--navy); }
+        .checkout-btn { background-color: var(--terracotta); color: white; border: none; padding: 15px; width: 100%; cursor: pointer; border-radius: 8px; font-size: 18px; font-weight: 700; margin-top: 20px; }
+        .checkout-btn:hover { background-color: #c55e3d; }
+        @media (max-width: 760px) {
+            body { padding: 14px; }
+            header { align-items: flex-start; flex-direction: column; }
+            .main-layout { flex-direction: column; }
+            .products-section, .cart-section { width: 100%; }
+            .cart-section { position: static; }
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Retail Store POS System</h1>
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">V</div>
+            <div>
+                <h1>Veloura Studio</h1>
+                <p class="tagline">Curated Goods • Retail</p>
+            </div>
+        </div>
         <a href="../../index.html" class="back-btn">Back to Main</a>
     </header>
 
     <div class="main-layout">
         <div class="products-section">
-            <h2>Available Products</h2>
+            <h2>Featured Products</h2>
             <div class="product-grid">
                 <div class="product-card">
                     <div class="product-info">
